@@ -1,0 +1,12 @@
+GET http://localhost:3003/api/blogs
+
+### add blog
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title":"Deep dive into the Event Loop of NodeJS ➰",
+    "author":"Muhammad Talha Siddique",
+    "url":"https://medium.com/@ztalha6/deep-dive-into-the-event-loop-of-nodejs-42ea60e055a2",
+    "likes":4
+}
