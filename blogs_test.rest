@@ -5,8 +5,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title":"Deep dive into the Event Loop of NodeJS ➰",
-    "author":"Muhammad Talha Siddique",
-    "url":"https://medium.com/@ztalha6/deep-dive-into-the-event-loop-of-nodejs-42ea60e055a2",
-    "likes":4
+    "title":"15 Useful Custom React Hooks for Your Next Web App",
+    "author":"Chris1993",
+    "url":"https://medium.com/@Chris1993/15-useful-custom-react-hooks-for-your-next-web-app-c5902d868f4c",
+    "likes":56
 }
