@@ -172,7 +172,7 @@ describe('favorite blog',() => {
       expect(listHelper.favoriteBlog(multipleBlogs)).toEqual(expectedObject)
     })
 
-    test('of many value with same maximum like is return right',() => {
+    test('of many value with same maximum like is return first value',() => {
       const expectedObject={
         "title": "Deep dive into the Event Loop of NodeJS ➰",
         "author": "Muhammad Talha Siddique",
