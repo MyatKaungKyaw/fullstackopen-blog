@@ -38,7 +38,7 @@ const mostLikes = blogs => {
         likes:likes
       }
     })
-    return authorsTotalLike.reduce((pval,cval) => pval.likes > cval.likes ? pval : cval)
+return authorsTotalLike.reduce((pval,cval) => pval.likes > cval.likes ? pval : cval,{})
 }
 
 module.exports = {

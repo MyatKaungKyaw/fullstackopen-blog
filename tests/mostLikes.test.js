@@ -1,5 +1,3 @@
-import { describe } from "node:test"
-
 const listHelper = require('../utils/list_helper')
 
 const multipleBlogs = [
@@ -123,6 +121,7 @@ const listWitMultiMostLike = [
 const listWithOneBlog = [
     {
         _id: '5a422aa71b54a676234d17f8',
+        author: 'Edsger W. Dijkstra',
         title: 'Go To Statement Considered Harmful',
         url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
         likes: 5,
@@ -143,15 +142,15 @@ describe('most likes', () => {
     })
 
     test('of many value is return right', () => {
-        listHelper.mostLikes(multipleBlogs).toEqual({
+        expect(listHelper.mostLikes(multipleBlogs)).toEqual({
             author: "Edsger W. Dijkstra",
             likes: 17,
         })
     })
 
-    test('of many valute same most like is return right',() =>{
-        listHelper.mostLikes(listWitMultiMostLike).toEqual({
-            author: "Edsger W. Dijkstra",
+    test('of many value with same most like is return right',() =>{
+        expect(listHelper.mostLikes(listWitMultiMostLike)).toEqual({
+            author: "Elferd C. Martin",
             likes: 17,
         })
     })
