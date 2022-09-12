@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+
 const api = supertest(app)
 
 beforeEach(async () => {
@@ -12,13 +13,23 @@ beforeEach(async () => {
     await Promise.all(promiseBlogs)
 })
 
-test('specific blog is within the returned blogs',() => {
-    api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type',/application\/json/)
+describe('blog api test', () => {
+    test('specific blog is within the returned blogs', async () => {
+        await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
+
+    test('return blog object to contain id property', async () => {
+        const blogs = await api.get('/api/blogs')
+
+        blogs.body.map(blog => {
+            expect(blog).toHaveProperty('id')
+        })
+    })
 })
 
-afterAll(() =>{
+afterAll(() => {
     mongoose.connection.close()
 })
