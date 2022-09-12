@@ -8,7 +8,7 @@ const api = supertest(app)
 const route = '/api/blogs'
 
 beforeEach(async () => {
-    Blog.deleteMany({})
+    await Blog.deleteMany({})
     const blogs = helper.initialBlog.map(blog => new Blog(blog))
     const promiseBlogs = blogs.map(blog => blog.save())
     await Promise.all(promiseBlogs)
@@ -30,17 +30,26 @@ describe('blog api test', () => {
         })
     })
 
-    // test('a valid blog is added',async () => {
-    //     const newBlog = {
-    //         title: "Canonical string reduction",
-    //         author: "Edsger W. Dijkstra",
-    //         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    //         likes: 12,
-    //     }
+    test('a valid blog is added', async () => {
+        const newBlog = {
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes: 12,
+        }
 
-    //     const blogs = await api
-    //     .post('/api/')
-    // })
+        await api
+            .post(route)
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type',/application\/json/)
+
+        const blogs = await api.get(route)
+        const titles = blogs.body.map(blog => blog.title)
+
+        expect(blogs.body).toHaveLength(helper.initialBlog.length + 1)
+        expect(titles).toContain('Canonical string reduction')
+    })
 })
 
 afterAll(() => {
