@@ -51,13 +51,23 @@ describe('blog api test', () => {
         expect(titles).toContain('Canonical string reduction')
     })
 
-    test('blog with no like property is default to 0 value',async () => {
+    test('blog with no like property request is default to 0 value',async () => {
+        const blogWitNoLike = {
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        }
+
+        await api
+            .post(route)
+            .send(blogWitNoLike)
+            .expect(201)
+            .expect('Content-Type',/application\/json/)
+
         const blogs = await api.get(route)
-        blogs.body.map(blog => {
-            if(!blog.hasOwnProperty('likes')){
-                //expect
-            }
-        })
+        const blog = blogs.body.find(blog => blog.title === 'Canonical string reduction')
+        console.log(blog)
+        expect(blog.likes).toEqual(0)
     })
 })
 
