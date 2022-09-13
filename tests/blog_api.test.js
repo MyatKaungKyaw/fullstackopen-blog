@@ -50,6 +50,15 @@ describe('blog api test', () => {
         expect(blogs.body).toHaveLength(helper.initialBlog.length + 1)
         expect(titles).toContain('Canonical string reduction')
     })
+
+    test('blog with no like property is default to 0 value',async () => {
+        const blogs = await api.get(route)
+        blogs.body.map(blog => {
+            if(!blog.hasOwnProperty('likes')){
+                //expect
+            }
+        })
+    })
 })
 
 afterAll(() => {
