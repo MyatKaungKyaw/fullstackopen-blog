@@ -66,25 +66,36 @@ describe('blog api test', () => {
 
         const blogs = await api.get(endPoint)
         const blog = blogs.body.find(blog => blog.title === 'Canonical string reduction')
-        console.log(blog)
         expect(blog.likes).toEqual(0)
     })
 
-    // test('blog with no title or url is not added', async  => {
-    //     const blogWitNoTitle = {
-    //         author: "Edsger W. Dijkstra",
-    //         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    //         likes:5,
-    //     }
+    test('blog with no title is not added', async () => {
+        const blogWitNoTitle = {
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes:5,
+        }
 
-    //     const blogWitNoURL = {
-    //         title: "useId Hook Explained",
-    //         author: "Ahsan Ali Mansoor",
-    //         likes: 4,
-    //     }
+        await api
+        .post(endPoint)
+        .send(blogWitNoTitle)
+        .expect(400)
+    })
 
-    //     await api.post()
-    // })
+    
+    test('blog with no url is not added', async () => {
+        const blogWitNoURL = {
+            title: "useId Hook Explained",
+            author: "Ahsan Ali Mansoor",
+            likes: 4,
+        }
+
+        await api
+        .post(endPoint)
+        .send(blogWitNoURL)
+        .expect(400)
+
+    })
 })
 
 afterAll(() => {
