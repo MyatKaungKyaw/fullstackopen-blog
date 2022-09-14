@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start":"cross-env NODE_ENV=production node index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit"
   },
@@ -15,6 +15,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "express-async-errors": "^3.1.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.5.3"
   },
