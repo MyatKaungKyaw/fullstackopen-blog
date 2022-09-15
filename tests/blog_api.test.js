@@ -104,7 +104,6 @@ describe('deleting blog',() => {
     test('success with status 204 if id is valid', async () => {
         const blogsBeforeDelete = await helper.blogsInDb()
         const blogToDelete = blogsBeforeDelete[0]
-        console.log(`${endPoint}/${blogToDelete.id}`)
         await api
         .delete(`${endPoint}/${blogsBeforeDelete[0].id}`)
         .expect(204)
@@ -114,6 +113,24 @@ describe('deleting blog',() => {
 
         const ids = blogsAfterDelete.map(blog => blog.id)
         expect(ids).not.toContain(blogToDelete.id)
+    })
+})
+
+describe('updating blog',() => {
+    test('success with status 201 if id is valid', async () =>{
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+        blogToUpdate.likes = 55
+
+        await api
+        .put(`${endPoint}/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+        .expect(201)
+        .expect('Content-Type',/application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+        expect(blogsAtEnd).toContainEqual(blogToUpdate)
     })
 })
 
