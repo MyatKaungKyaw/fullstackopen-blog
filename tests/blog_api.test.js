@@ -14,7 +14,7 @@ beforeEach(async () => {
     await Promise.all(promiseBlogs)
 })
 
-describe('blog api test', () => {
+describe('getting blogs',() =>{
     test('specific blog is within the returned blogs', async () => {
         await api
             .get(endPoint)
@@ -29,7 +29,9 @@ describe('blog api test', () => {
             expect(blog).toHaveProperty('id')
         })
     })
+})
 
+describe('adding blog',() =>{
     test('a valid blog is added', async () => {
         const newBlog = {
             title: "Canonical string reduction",
