@@ -2,8 +2,8 @@ require('dotenv').config()
 const logger = require('./utils/logger')
 const config = require('./utils/config')
 const express = require('express')
-//try catch handler library
-require('express-sync-errors')
+//try catch handler library for async function
+require('express-async-errors')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
