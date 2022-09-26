@@ -23,6 +23,6 @@ app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use('/api/blogs',blogRouter)
-app.user('/api/users',userRouter)
+app.use('/api/users',userRouter)
 
 module.exports = app

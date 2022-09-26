@@ -11,4 +11,4 @@ userSchema.set('toJSON',{
     transform: toJson.transformForUser
 })
 
-module.exports = mongoose.Model('User',userSchema)
+module.exports = mongoose.model('User',userSchema)
