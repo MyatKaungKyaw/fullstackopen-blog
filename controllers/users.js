@@ -6,7 +6,7 @@ usersRouter.post('/', async (req, res) => {
     const { username, name, password } = req.body
 
     const saltRounds = 10
-    const passwordHash = bcrypt.hash(password, saltRounds)
+    const passwordHash = await bcrypt.hash(password, saltRounds)
 
     const user = new User({
         username: username,
