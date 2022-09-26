@@ -10,3 +10,5 @@ const userSchema = new mongoose.Schema({
 userSchema.set('toJSON',{
     transform: toJson.transformForUser
 })
+
+module.exports = mongoose.Model('User',userSchema)
