@@ -1,4 +1,4 @@
-const usersRouter = require('mongoose').Router()
+const usersRouter = require('express').Router()
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 
