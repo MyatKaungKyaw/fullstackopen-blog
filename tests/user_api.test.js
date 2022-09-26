@@ -41,6 +41,14 @@ describe('when there is user data in database',() =>{
         const usernames = usersAtEnd.map(user => user.username)
         expect(usernames).toContain(newUser.username)
     })
+
+    test('creation fail with existing username with status code 400',async () => {
+        const usersAtStart = await helper.usersInDb()
+        const passwordHash = await bcrypt.hash('sEcret',10)
+        const newUser = new User({
+            username: usersAtStart[0].username,
+        })
+    })
 })
 
 afterAll(() => {
