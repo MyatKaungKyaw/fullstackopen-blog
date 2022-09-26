@@ -1,7 +1,9 @@
+const mongoose = require('mongoose')
+const supertest = require('supertest')
 const User = require('../models/user')
 const helper = require('./test_helper')
 const bcrypt = require('bcryptjs')
-const app = requier('../app')
+const app = require('../app')
 
 const api = supertest(app)
 
@@ -39,4 +41,8 @@ describe('when there is user data in database',() =>{
         const usernames = usersAtEnd.map(user => user.username)
         expect(usernames).toContain(newUser.username)
     })
+})
+
+afterAll(() => {
+  mongoose.connection.close()
 })
