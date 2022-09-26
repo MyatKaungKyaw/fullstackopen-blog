@@ -10,3 +10,8 @@ const transformNormal = (document,returnedObject) => {
     delete returnedObject._id
     delete returnedObject.__v
 }
+
+module.exports = {
+    transformForUser,
+    transformNormal,
+}
