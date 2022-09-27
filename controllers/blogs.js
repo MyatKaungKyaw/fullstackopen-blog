@@ -5,7 +5,7 @@ const User = require('../models/user')
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
         .find({})
-        .populate('user')
+        .populate('user',{username:1,name:1})
     response.json(blogs)
 })
 
@@ -16,17 +16,20 @@ blogsRouter.post('/', async (request, response) => {
     }
 
     const allUsers = await User.find({})
-    const userId = allUsers.length > 0 ? allUsers[0]._id : '';
+    const user = allUsers.length > 0 ? allUsers[0] : {};
 
     const blog = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes || 0,
-        user: userId,
+        user: user._id,
     })
 
     const result = await blog.save()
+    user.blogs = user.blogs.concat(result._id)
+    await user.save()
+  
     response.status(201).json(result)
 })
 
@@ -44,9 +47,7 @@ blogsRouter.put('/:id', async (request, response) => {
         url: body.url,
         likes: body.likes,
     }
-    console.log('before upd')
     const updBlog = await Blog.findByIdAndUpdate(id, blog, { new: true })
-    console.log('after upd')
     response.status(201).json(updBlog)
 })
 
