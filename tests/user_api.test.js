@@ -143,7 +143,7 @@ describe('user input with password',() => {
         .expect(400)
         .expect('Content-Type',/application\/json/)
 
-        expect(result.body.error).toContain('password missing')
+        expect(result.body.error).toContain('password length must be at least 3 characters long')
 
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toHaveLength(usersAtStart.length)
