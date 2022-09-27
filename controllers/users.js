@@ -3,55 +3,57 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 
 usersRouter.post('/', async (req, res) => {
-  const { username, name, password } = req.body
+    const { username, name, password } = req.body
 
-  const checkUser = await User.find({ username })
-
-  // validate username
-  if (!username) {
-    res.status(400).json({
-      error: 'username missing'
-    })
-  } else if (username.length < 3) {
-    res.status(400).json({
-      error: 'username length must be at least 3 characters long'
-    })
-  } else if (checkUser.length > 1) {
-    if (username === checkUser[0].username) {
-      res.status(400).json({
-        error: 'username must be unique'
-      })
+    const checkUser = await User.find({ username })
+    console.log('username',username)
+    console.log('checkUser',checkUser)
+    // validate username
+    if (!username) {
+        res.status(400).json({
+            error: 'username missing'
+        })
+    } else if (username.length < 3) {
+        res.status(400).json({
+            error: 'username length must be at least 3 characters long'
+        })
+    } else if (checkUser.length > 0) {
+        if (username === checkUser[0].username) {
+            res.status(400).json({
+                error: 'username must be unique'
+            })
+        }
+    }// validate password 
+    else if (!password) {
+        res.status(400).json({
+            error: 'password missing'
+        })
+        console.log('password check')
+    } else if (password.length < 3) {
+        res.status(400).json({
+            error: 'password length must be at least 3 characters long'
+        })
     }
-  }// validate password 
-  else if (!password) {
-    res.status(400).json({
-      error: 'password missing'
+
+    //hash password
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(password, saltRounds)
+
+    const user = new User({
+        username: username,
+        name: name,
+        password: passwordHash
     })
-  } else if (password.length < 3) {
-    res.status(400).json({
-      error: 'password length must be at least 3 characters long'
-    })
-  }
 
-  //hash password
-  const saltRounds = 10
-  const passwordHash = await bcrypt.hash(password, saltRounds)
-
-  const user = new User({
-    username: username,
-    name: name,
-    password: passwordHash
-  })
-
-  const savedUser = await user.save()
-  res.status(201).json(savedUser)
+    const savedUser = await user.save()
+    res.status(201).json(savedUser)
 })
 
 usersRouter.get('/', async (req, res) => {
-  const allUsers = await User
-  .find({})
-  .populate('blogs',{title:1,author:1,url:1,likes:1})
-  res.json(allUsers)
+    const allUsers = await User
+        .find({})
+        .populate('blogs', { title: 1, author: 1, url: 1, likes: 1 })
+    res.json(allUsers)
 })
 
 module.exports = usersRouter
