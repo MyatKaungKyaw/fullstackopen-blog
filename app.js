@@ -9,6 +9,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const blogRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
+const logInRouter = require('./controllers/logIn')
 const middleware = require('./utils/middleware')
 
 mongoose.connect(config.MONGODB_URI)
@@ -24,5 +25,6 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use('/api/blogs',blogRouter)
 app.use('/api/users',userRouter)
+app.user('api/login',logInRouter)
 
 module.exports = app
