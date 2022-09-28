@@ -25,6 +25,6 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use('/api/blogs',blogRouter)
 app.use('/api/users',userRouter)
-app.user('api/login',logInRouter)
+app.use('api/login',logInRouter)
 
 module.exports = app
