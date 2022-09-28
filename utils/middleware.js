@@ -29,5 +29,7 @@ const unknownEndPoint = (req,res) => {
 }
 
 module.exports={
-    requestLogger
+    requestLogger,
+    errorHandler,
+    unknownEndPoint,
 }
