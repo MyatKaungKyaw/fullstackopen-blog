@@ -63,6 +63,14 @@ describe('when there is user data in database', () => {
 })
 
 describe('user input with username', () => {
+    beforeAll(async () => {
+        await User.deleteMany({})
+    })
+
+    afterAll(async () => {
+        await User.deleteMany({})
+    })
+
     test('empty to fail with 400 status and message', async () => {
         const usersAtStart = await helper.usersInDb()
         

@@ -10,27 +10,27 @@ usersRouter.post('/', async (req, res) => {
     console.log('checkUser',checkUser)
     // validate username
     if (!username) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'username missing'
         })
     } else if (username.length < 3) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'username length must be at least 3 characters long'
         })
     } else if (checkUser.length > 0) {
         if (username === checkUser[0].username) {
-            res.status(400).json({
+            return res.status(400).json({
                 error: 'username must be unique'
             })
         }
     }// validate password 
     else if (!password) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'password missing'
         })
         console.log('password check')
     } else if (password.length < 3) {
-        res.status(400).json({
+        return res.status(400).json({
             error: 'password length must be at least 3 characters long'
         })
     }
