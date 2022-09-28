@@ -11,6 +11,7 @@ loginRouter.post('/', async (req, res) => {
 
     const passwordCorrect = user === null
         ? false
+        //compare password from request and from database
         : await bcrypt.compare(password, user.password)
 
     if (!(user && passwordCorrect)) {
@@ -22,7 +23,12 @@ loginRouter.post('/', async (req, res) => {
         id: user._id
     }
 
-    const token = jwt.sign(userForToken, process.env.SECRET)
+    //create token with time expiration
+    const token = jwt.sign(
+        userForToken,
+        process.env.SECRET
+        , { expireIn: 60 * 60 }
+    )
 
     res
         .status(200)
