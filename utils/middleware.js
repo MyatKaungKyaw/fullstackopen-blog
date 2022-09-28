@@ -24,6 +24,10 @@ const errorHandler = (err,req,res,next) => {
     next(err)
 }
 
+const unknownEndPoint = (req,res) => {
+    res.status(404).json({error:'unknown endpoint'})
+}
+
 module.exports={
     requestLogger
 }
