@@ -8,8 +8,6 @@ loginRouter.post('/', async (req, res) => {
 
     const user = await User.findOne({ username })
 
-    console.log(user)
-
     const passwordCorrect = user === null
         ? false
         //compare password from request and hash
