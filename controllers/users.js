@@ -6,8 +6,6 @@ usersRouter.post('/', async (req, res) => {
     const { username, name, password } = req.body
 
     const checkUser = await User.find({ username })
-    console.log('username',username)
-    console.log('checkUser',checkUser)
     // validate username
     if (!username) {
         return res.status(400).json({
