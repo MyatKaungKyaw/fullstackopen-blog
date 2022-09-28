@@ -12,13 +12,13 @@ const errorHandler = (err,req,res,next) => {
     logger.error(err.message)
 
     if(err.name === 'CastError'){
-        return res.json(400).json({error:'malformatted id'})
+        return res.status(400).json({error:'malformatted id'})
     }else if(err.name === 'ValidationError'){
-        return res.json(400).json(err.message)
+        return res.status(400).json(err.message)
     }else if(err.name === 'JsonWebTokenError'){
-        return res.json(401).json({error:'invalid token'})
+        return res.status(401).json({error:'invalid token'})
     }else if(err.name === 'TokenExpiredError'){
-        return res.json(401).json({error:'token expired'})
+        return res.status(401).json({error:'token expired'})
     }
 
     next(err)
