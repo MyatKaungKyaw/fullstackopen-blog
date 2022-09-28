@@ -56,8 +56,8 @@ usersRouter.get('/', async (req, res) => {
 })
 
 usersRouter.delete('/',async (req,res) => {
-  await User.deleteMany({})
-  res.status(204).end()
+  // await User.deleteMany({})
+  res.status(400).end()
 })
 
 module.exports = usersRouter
