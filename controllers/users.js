@@ -28,7 +28,6 @@ usersRouter.post('/', async (req, res) => {
         return res.status(400).json({
             error: 'password missing'
         })
-        console.log('password check')
     } else if (password.length < 3) {
         return res.status(400).json({
             error: 'password length must be at least 3 characters long'
@@ -54,6 +53,11 @@ usersRouter.get('/', async (req, res) => {
         .find({})
         .populate('blogs', { title: 1, author: 1, url: 1, likes: 1 })
     res.json(allUsers)
+})
+
+usersRouter.delete('/',async (req,res) => {
+  await User.deleteMany({})
+  res.status(204).end()
 })
 
 module.exports = usersRouter
