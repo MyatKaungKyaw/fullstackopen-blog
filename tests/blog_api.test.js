@@ -1,15 +1,31 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const jwt = require('jasonwebtoken')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const api = supertest(app)
-const endPoint = '/api/blogs'
+const blogEndPoint = '/api/blogs'
+
+beforeAll ( async () => {
+    const blogger = new User(helper.blogger)
+    const user = new User(helper.user)
+    await blogger.save()
+    await user.save()
+})
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    const blogs = helper.initialBlog.map(blog => new Blog(blog))
+    const blogger = await User.findOne({username:helper.blogger.username})
+    const blogs = helper.initialBlog.map(blog => new Blog({
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes,
+        user: blogger._id
+    }))
     const promiseBlogs = blogs.map(blog => blog.save())
     await Promise.all(promiseBlogs)
 })
@@ -17,14 +33,14 @@ beforeEach(async () => {
 describe('getting blogs',() =>{
     test('specific blog is within the returned blogs', async () => {
         await api
-            .get(endPoint)
+            .get(blogEndPoint)
             .expect(200)
             .expect('Content-Type', /application\/json/)
     })
 
     test('return blog object to contain id property', async () => {
-        const blogs = await api.get(endPoint)
-
+        const blogs = await api.get(blogEndPoint)
+        
         blogs.body.map(blog => {
             expect(blog).toHaveProperty('id')
         })
@@ -32,60 +48,72 @@ describe('getting blogs',() =>{
 })
 
 describe('adding blog',() =>{
-    // test('a valid blog is added', async () => {
-    //     const newBlog = {
-    //         title: "Canonical string reduction",
-    //         author: "Edsger W. Dijkstra",
-    //         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    //         likes: 12,
-    //     }
+    test('a valid blog is added', async () => {
+        const user = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
 
-    //     await api
-    //         .post(endPoint)
-    //         .send(newBlog)
-    //         .expect(201)
-    //         .expect('Content-Type', /application\/json/)
+        const newBlog = {
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes: 12,
+        }
 
-    //     const blogs = await api.get(endPoint)
-    //     const titles = blogs.body.map(blog => blog.title)
+        await api
+            .post(blogEndPoint)
+            .set('Authorization',`bearer ${bloggerToken}`)
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-    //     expect(blogs.body).toHaveLength(helper.initialBlog.length + 1)
-    //     expect(titles).toContain('Canonical string reduction')
-    // })
+        const blogs = await api.get(blogEndPoint)
+        const titles = blogs.body.map(blog => blog.title)
 
-    // test('blog with no like property request is default to 0 value', async () => {
-    //     const blogWitNoLike = {
-    //         title: "Canonical string reduction",
-    //         author: "Edsger W. Dijkstra",
-    //         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    //     }
+        expect(blogs.body).toHaveLength(helper.initialBlog.length + 1)
+        expect(titles).toContain('Canonical string reduction')
+    })
 
-    //     await api
-    //         .post(endPoint)
-    //         .send(blogWitNoLike)
-    //         .expect(201)
-    //         .expect('Content-Type', /application\/json/)
+    test('blog with no like property request is default to 0 value', async () => {
+        const user = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
 
-    //     const blogs = await api.get(endPoint)
-    //     const blog = blogs.body.find(blog => blog.title === 'Canonical string reduction')
-    //     expect(blog.likes).toEqual(0)
-    // })
+        const blogWitNoLike = {
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+        }
 
-    // test('blog with no title is not added', async () => {
-    //     const blogWitNoTitle = {
-    //         author: "Edsger W. Dijkstra",
-    //         url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    //         likes:5,
-    //     }
+        await api
+            .post(blogEndPoint)
+            .set('Authorization',`bearer ${bloggerToken}`)
+            .send(blogWitNoLike)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
 
-    //     await api
-    //     .post(endPoint)
-    //     .send(blogWitNoTitle)
-    //     .expect(400)
-    // })
+        const blogs = await api.get(blogEndPoint)
+        const blog = blogs.body.find(blog => blog.title === 'Canonical string reduction')
+        expect(blog.likes).toEqual(0)
+    })
 
-    
+    test('blog with no title is not added', async () => {
+        const user = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
+        const blogWitNoTitle = {
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes:5,
+        }
+
+        await api
+        .post(blogEndPoint)
+        .set('Authorization',`bearer ${bloggerToken}`)
+        .send(blogWitNoTitle)
+        .expect(400)
+    })
+
     test('blog with no url is not added', async () => {
+        const user = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
         const blogWitNoURL = {
             title: "useId Hook Explained",
             author: "Ahsan Ali Mansoor",
@@ -93,7 +121,8 @@ describe('adding blog',() =>{
         }
 
         await api
-        .post(endPoint)
+        .post(blogEndPoint)
+        .set('Authorization',`bearer ${bloggerToken}`)
         .send(blogWitNoURL)
         .expect(400)
 
@@ -101,19 +130,20 @@ describe('adding blog',() =>{
 })
 
 describe('deleting blog',() => {
-    // test('success with status 204 if id is valid', async () => {
-    //     const blogsBeforeDelete = await helper.blogsInDb()
-    //     const blogToDelete = blogsBeforeDelete[0]
-    //     await api
-    //     .delete(`${endPoint}/${blogsBeforeDelete[0].id}`)
-    //     .expect(204)
+    test('success with status 204 if id is valid', async () => {
+        
+        const blogsBeforeDelete = await helper.blogsInDb()
+        const blogToDelete = blogsBeforeDelete[0]
+        await api
+        .delete(`${endPoint}/${blogsBeforeDelete[0].id}`)
+        .expect(204)
 
-    //     const blogsAfterDelete = await helper.blogsInDb()
-    //     expect(blogsAfterDelete).toHaveLength(blogsBeforeDelete.length-1)
+        const blogsAfterDelete = await helper.blogsInDb()
+        expect(blogsAfterDelete).toHaveLength(blogsBeforeDelete.length-1)
 
-    //     const ids = blogsAfterDelete.map(blog => blog.id)
-    //     expect(ids).not.toContain(blogToDelete.id)
-    // })
+        const ids = blogsAfterDelete.map(blog => blog.id)
+        expect(ids).not.toContain(blogToDelete.id)
+    })
 })
 
 describe('updating blog',() => {
@@ -123,7 +153,7 @@ describe('updating blog',() => {
         blogToUpdate.likes = 55
 
         await api
-        .put(`${endPoint}/${blogToUpdate.id}`)
+        .put(`${blogEndPoint}/${blogToUpdate.id}`)
         .send(blogToUpdate)
         .expect(201)
         .expect('Content-Type',/application\/json/)
@@ -134,6 +164,7 @@ describe('updating blog',() => {
     })
 })
 
-afterAll(() => {
+afterAll(async () => {
+    await User.deleteMany({})
     mongoose.connection.close()
 })
