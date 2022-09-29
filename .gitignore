@@ -145,4 +145,7 @@ dist
 .replit
 replit.nix
 
+#gitpod
+.gitpod.yml
+
 # End of https://www.toptal.com/developers/gitignore/api/node
