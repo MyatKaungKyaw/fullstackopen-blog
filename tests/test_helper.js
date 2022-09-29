@@ -16,6 +16,18 @@ const initialBlog = [
     },
 ]
 
+const blogger = {
+        username: 'john',
+        name:'john snow',
+        password:'john',
+    }
+
+const user = {
+    username: 'morty',
+    name:'morty snow',
+    password:'morty'
+},
+
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
@@ -26,9 +38,26 @@ const usersInDb = async () => {
     return users.map(user => user.toJSON())
 }
 
+
+const generateTenSecTokenOf = async (username) => {
+    const user = await User.findOne({username:username})
+    const token = {
+        username:user.username,
+        id:user._id
+    }
+
+    return jwt.sign(
+        token, 
+        process.env.SECRET, 
+        {expiresIn:10}
+    )
+}
+
 module.exports = {
     initialBlog,
     blogsInDb,
     usersInDb,
-    
+    blogger,
+    user,
+    generateTenSecTokenOf,
 }
