@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -26,7 +27,7 @@ const user = {
     username: 'morty',
     name:'morty snow',
     password:'morty'
-},
+}
 
 const blogsInDb = async () => {
     const blogs = await Blog.find({})
