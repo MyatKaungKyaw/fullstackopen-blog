@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-const jwt = require('jasonwebtoken')
+const jwt = require('jsonwebtoken')
 const app = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
@@ -49,8 +49,8 @@ describe('getting blogs',() =>{
 
 describe('adding blog',() =>{
     test('a valid blog is added', async () => {
-        const user = helper.blogger
-        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
+        const blogger = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(blogger.username)
 
         const newBlog = {
             title: "Canonical string reduction",
@@ -74,8 +74,8 @@ describe('adding blog',() =>{
     })
 
     test('blog with no like property request is default to 0 value', async () => {
-        const user = helper.blogger
-        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
+        const blogger = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(blogger.username)
 
         const blogWitNoLike = {
             title: "Canonical string reduction",
@@ -96,8 +96,8 @@ describe('adding blog',() =>{
     })
 
     test('blog with no title is not added', async () => {
-        const user = helper.blogger
-        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
+        const blogger = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(blogger.username)
         const blogWitNoTitle = {
             author: "Edsger W. Dijkstra",
             url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
@@ -112,8 +112,8 @@ describe('adding blog',() =>{
     })
 
     test('blog with no url is not added', async () => {
-        const user = helper.blogger
-        const bloggerToken = await helper.generateTenSecTokenOf(user.username)
+        const blogger = helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(blogger.username)
         const blogWitNoURL = {
             title: "useId Hook Explained",
             author: "Ahsan Ali Mansoor",
@@ -125,17 +125,35 @@ describe('adding blog',() =>{
         .set('Authorization',`bearer ${bloggerToken}`)
         .send(blogWitNoURL)
         .expect(400)
+    })
 
+    test('blog with no token is not added', async () => {
+        const newBlog = {
+            title: "Canonical string reduction",
+            author: "Edsger W. Dijkstra",
+            url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes: 12,
+        }
+
+        const result = await api
+            .post(blogEndPoint)
+            .send(newBlog)
+            .expect(401)
+            .expect('Content-Type', /application\/json/)
+        
+        expect(result.body.error).toContain('invalid token')
     })
 })
 
 describe('deleting blog',() => {
     test('success with status 204 if id is valid', async () => {
-        
+        const blogger=helper.blogger
+        const bloggerToken = await helper.generateTenSecTokenOf(blogger.username)
         const blogsBeforeDelete = await helper.blogsInDb()
         const blogToDelete = blogsBeforeDelete[0]
         await api
-        .delete(`${endPoint}/${blogsBeforeDelete[0].id}`)
+        .delete(`${blogEndPoint}/${blogsBeforeDelete[0].id}`)
+        .set('Authorization',`bearer ${bloggerToken}`)
         .expect(204)
 
         const blogsAfterDelete = await helper.blogsInDb()
