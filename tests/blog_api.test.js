@@ -180,6 +180,24 @@ describe('updating blog',() => {
         expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
         expect(blogsAtEnd).toContainEqual(blogToUpdate)
     })
+    
+    test('with only likes modify success with status 201 if id is valid', async () =>{
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+        const updLikes = blogToUpdate.likes +5
+        blogToUpdate.likes = updLikes
+
+        await api
+        .patch(`${blogEndPoint}/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+        .expect(201)
+        .expect('Content-Type',/application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+
+        expect(blogsAtEnd).toContainEqual(blogToUpdate)
+    })
 })
 
 afterAll(async () => {
