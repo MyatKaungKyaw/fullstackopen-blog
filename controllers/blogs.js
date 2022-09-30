@@ -63,4 +63,16 @@ blogsRouter.put('/:id', async (request, response) => {
     response.status(201).json(updBlog)
 })
 
+blogsRouter.patch('/:id', async (request,response) => {
+    const id = request.params.id
+    const likes = request.body.likes
+
+    if (likes === null){
+        return response.status(400).json({error:'no likes value to update'})
+    }
+
+    const updBlog = await Blog.findByIdAndUpdate(id,{likes:likes},{new:true})
+    response.status(201).json(updBlog)
+})
+
 module.exports = blogsRouter
